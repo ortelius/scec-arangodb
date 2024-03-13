@@ -1,0 +1,15 @@
+apiVersion: v1
+entries:
+  scec-arangodb:
+  - apiVersion: v2
+    appVersion: 11.0.0
+    created: "2024-03-11T17:23:40.40695773Z"
+    description: Dependency Packages
+    digest: a2ceb6c1473bacf96727ad777e2153b4045b2aa7769e03642870cb77386eda7f
+    icon: https://ortelius.github.io/ortelius-charts/logo.png
+    name: scec-arangodb
+    type: application
+    urls:
+    - https://github.com/ortelius/scec-arangodb/releases/download/scec-arangodb-11.0.0/scec-arangodb-11.0.0.tgz
+    version: 11.0.0
+generated: "2024-03-11T17:23:40.406610401Z"
