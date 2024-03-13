@@ -1,0 +1,47 @@
+name: Build/Push Image and Release Charts
+
+on:
+  pull_request:
+    paths-ignore:
+      - chart/**/Chart.yaml
+      - chart/**/values.yaml
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - chart/**/Chart.yaml
+      - chart/**/values.yaml
+  workflow_dispatch:
+
+permissions: read-all
+jobs:
+  setenv:
+    uses: ortelius/workflow-toolkit/.github/workflows/env-config-workflow.yml@f7ed4b25b4fefcf3a7c44f8c605cce986d9777db
+    with:
+      gh_head_ref: ${{ github.head_ref }}
+      gh_ref_name: ${{ github.ref_name }}
+      gh_event_repo_name: ${{ github.event.repository.name }}
+      gh_sha: ${{ github.sha }}
+      gh_repo: ${{ github.repository }}
+      gh_run_number: ${{ github.run_number }}
+  helm:
+    permissions:
+      contents: write
+    uses: ortelius/workflow-toolkit/.github/workflows/helm-release-workflow.yml@f7ed4b25b4fefcf3a7c44f8c605cce986d9777db
+    needs:
+      - setenv
+    with:
+      gh_repository_owner: ${{ github.repository_owner }}
+      gh_event_name: ${{ github.event_name }}
+      gh_ref: ${{ github.ref }}
+      gh_handle: ${{ needs.setenv.outputs.gh_handle }}
+      chart: chart/${{ needs.setenv.outputs.compname }}
+      chart_version: ${{ needs.setenv.outputs.chart_version }}
+      image_repository: arangodb
+      image_tag: "3.11.8"
+      image_digest: "a831f2663e587e264c1ba5d0656ed510832c3b3d2255dcbb2877d5fc00be9539"
+    secrets:
+      GPG_KEYRING_BASE64: ${{ secrets.GPG_KEYRING_BASE64 }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      GPG_KEY: ${{ secrets.GPG_KEY }}
+      gh_token: ${{ secrets.HELM_INDEXER_TOKEN }}

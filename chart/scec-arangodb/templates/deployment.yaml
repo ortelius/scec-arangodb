@@ -1,0 +1,65 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "scec-arangodb.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: {{ include "scec-arangodb.name" . }}
+  selector:
+    matchLabels:
+      app:  {{ include "scec-arangodb.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "scec-arangodb.name" . }}
+    spec:
+      containers:
+        - name: {{ include "scec-arangodb.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8529
+          env:
+            - name: ARANGO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: arangodb
+                  key: DBPassword
+          volumeMounts:
+          - name: dbdata
+            mountPath: /var/lib/arangodb3
+          - name: dbappsdata
+            mountPath: /var/lib/arangodb3-apps
+      {{ if not (and (contains "gke" (.Capabilities.KubeVersion.Version | toString)) (contains "eks" (.Capabilities.KubeVersion.Version | toString))) }}
+      volumes:
+      - name: dbdata
+        hostPath:
+          type: DirectoryOrCreate
+          path: /dbdata  # matches kind containerPath in Kind Cluster.yaml
+      - name: dbappsdata
+        hostPath:
+          type: DirectoryOrCreate
+          path: /dbappsdata  # matches kind containerPath in Kind Cluster.yaml
+      {{ end }}
+  {{ if or (contains "gke" (.Capabilities.KubeVersion.Version | toString)) (contains "eks" (.Capabilities.KubeVersion.Version | toString)) }}
+  volumeClaimTemplates:
+  - metadata:
+      name: dbdata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "ortelius-sc"
+      resources:
+        requests:
+          storage: 1Gi
+  - metadata:
+      name: dbappsdata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "ortelius-sc"
+      resources:
+        requests:
+          storage: 1Gi
+  {{ end }}
