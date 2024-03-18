@@ -1,4 +1,5 @@
 ---
+{{ if (((.Values.global).arangodb).enabled) }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -63,3 +64,4 @@ spec:
         requests:
           storage: 1Gi
   {{ end }}
+{{ end }}
