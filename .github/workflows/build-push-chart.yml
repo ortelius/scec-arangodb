@@ -5,12 +5,14 @@ on:
     paths-ignore:
       - chart/**/Chart.yaml
       - chart/**/values.yaml
+      - README.md
   push:
     branches:
       - main
     paths-ignore:
       - chart/**/Chart.yaml
       - chart/**/values.yaml
+      - README.md
   workflow_dispatch:
 
 permissions: read-all

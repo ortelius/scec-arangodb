@@ -54,7 +54,7 @@ spec:
       storageClassName: "ortelius-sc"
       resources:
         requests:
-          storage: 1Gi
+          storage: 100Gi
   - metadata:
       name: dbappsdata
     spec:
@@ -62,6 +62,6 @@ spec:
       storageClassName: "ortelius-sc"
       resources:
         requests:
-          storage: 1Gi
+          storage: 10Gi
   {{ end }}
 {{ end }}
