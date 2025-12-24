@@ -40,7 +40,7 @@ jobs:
       chart: chart/${{ needs.setenv.outputs.compname }}
       chart_version: ${{ needs.setenv.outputs.chart_version }}
       image_repository: arangodb
-      image_tag: "3.11.8"
+      image_tag: "3.12.7"
       image_digest: "a831f2663e587e264c1ba5d0656ed510832c3b3d2255dcbb2877d5fc00be9539"
     secrets:
       GPG_KEYRING_BASE64: ${{ secrets.GPG_KEYRING_BASE64 }}
